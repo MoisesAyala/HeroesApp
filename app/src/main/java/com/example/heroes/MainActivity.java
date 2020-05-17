@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -18,6 +21,7 @@ import android.widget.NumberPicker;
 import com.example.heroes.heroapi.ApiService;
 import com.example.heroes.model.Heroe;
 import com.example.heroes.model.HeroeRespuesta;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -40,12 +44,6 @@ public class MainActivity extends AppCompatActivity {
     ListView lista;
     ArrayList<Heroe> datosHeroes = new ArrayList<Heroe>();
 
-    String [][] datos = {
-            {"Superman", "calando"},
-            {"Batman", "calando"},
-            {"Flash", "calando"}
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +58,22 @@ public class MainActivity extends AppCompatActivity {
 
         HeroAdapter = new Adapter(this, datosHeroes);
         lista = (ListView) findViewById(R.id.listahero);
-        lista.setAdapter(HeroAdapter); //MANDO LOS DATOS DEL ARRAYLIST "datosHeroes" AL ListView QUE SE LLAMA "listahrero"
+        lista.setAdapter(HeroAdapter);
+
+
+        //ITEMCLICK LISTENNER
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int item = Adapter.getItemAtposition(position);
+                int PositionFinal = datosHeroes.get(item).getId();
+                Intent visorInfo = new Intent(HeroAdapter.contexto, VisorInfo.class);
+                visorInfo.putExtra("IMG", PositionFinal);
+                HeroAdapter.contexto.startActivity(visorInfo);
+            }
+        });
+
+        //SCROLL LISTENNER
         lista.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
@@ -87,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    //MÉTODO QUE LLENA LA LISTA CON LOS DATOS DEL REQUEST
     public void GeneradorLista() {
         int inicio=Contador;
         int fin=Contador+10;
@@ -98,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             Contador++;
         }
     }
-
+    //MÉTODO QUE OBTIENE LOS DATOS DEL REQUEST
     private void obtenerDatos(int id) {
             ApiService service = retrofit.create(ApiService.class);
             Call<Heroe> heroeRespuestaCall = service.obtenerListaHeroes(id);

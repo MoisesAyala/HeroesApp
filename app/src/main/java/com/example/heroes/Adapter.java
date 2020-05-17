@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.heroes.model.Heroe;
-import com.example.heroes.model.Url;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ public class Adapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
 
     Context contexto;
-    ArrayList<Heroe> datosHeroe;
+    static ArrayList<Heroe> datosHeroe;
     //int [] datosImg;
 
     public Adapter (Context conexto, ArrayList<Heroe> datosHeroe/*, int [] imagenes*/){
@@ -28,6 +27,15 @@ public class Adapter extends BaseAdapter {
 
         inflater = (LayoutInflater) conexto.getSystemService(conexto.LAYOUT_INFLATER_SERVICE);
     }
+
+
+    public static int getItemAtposition(int id) {
+        for (int position=0; position<datosHeroe.size(); position++)
+            if (datosHeroe.get(position).getId() == id)
+                return position;
+            return 0;
+    }
+
 
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {

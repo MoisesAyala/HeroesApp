@@ -8,6 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.heroes.model.Heroe;
+import com.example.heroes.model.Url;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 public class Adapter extends BaseAdapter {
@@ -32,17 +35,16 @@ public class Adapter extends BaseAdapter {
         final View vista = inflater.inflate(R.layout.lista_elemento, null);
 
         TextView nombre = (TextView) vista.findViewById(R.id.heroname);
-        //ImageView imagen = (ImageView) vista.findViewById(R.id.heropic); //ESTABA INTENTANDO METER EN UN FUTURO LA IMAGEN, PERO LO TENÍA CON DRAWABLE
-
+        ImageView imagen = (ImageView) vista.findViewById(R.id.heropic);
+        Picasso.get().load(datosHeroe.get(i).getImage().getUrl()).into(imagen);
         nombre.setText(datosHeroe.get(i).getName());
 
         return vista;
     }
 
+
     @Override
-    public int getCount() {
-        return datosHeroe.size();
-    }
+    public int getCount() { return datosHeroe.size(); }
 
     @Override
     public Object getItem(int position) {

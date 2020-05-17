@@ -1,17 +1,26 @@
 package com.example.heroes;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 
 import com.example.heroes.heroapi.ApiService;
 import com.example.heroes.model.Heroe;
 import com.example.heroes.model.HeroeRespuesta;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,6 +56,39 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+        GeneradorLista();
+
+        HeroAdapter = new Adapter(this, datosHeroes);
+        lista = (ListView) findViewById(R.id.listahero);
+        lista.setAdapter(HeroAdapter); //MANDO LOS DATOS DEL ARRAYLIST "datosHeroes" AL ListView QUE SE LLAMA "listahrero"
+        lista.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (totalItemCount - visibleItemCount == firstVisibleItem){
+                    View v =  lista.getChildAt(totalItemCount-1);
+                    int offset = (v == null) ? 0 : v.getTop();
+                    if (offset == 0) {
+                        /*AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+                        alert.setTitle("Abajo");
+                        alert.setMessage("Estás abajo");
+                        alert.setPositiveButton("Aceptar",null);
+                        alert.show();
+                        return;*/
+                        GeneradorLista();
+                    }
+                }
+            }
+        });
+    }
+
+    public void GeneradorLista() {
         int inicio=Contador;
         int fin=Contador+10;
 
@@ -55,10 +97,6 @@ public class MainActivity extends AppCompatActivity {
             inicio++;
             Contador++;
         }
-
-        HeroAdapter = new Adapter(this, datosHeroes);
-        lista = (ListView) findViewById(R.id.listahero);
-        lista.setAdapter(HeroAdapter); //MANDO LOS DATOS DEL ARREGLO "datos" AL ListView QUE SE LLAMA "lista"
     }
 
     private void obtenerDatos(int id) {

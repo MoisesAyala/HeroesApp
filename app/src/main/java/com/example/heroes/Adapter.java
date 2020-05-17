@@ -7,18 +7,20 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.example.heroes.model.Heroe;
+import java.util.ArrayList;
 
 public class Adapter extends BaseAdapter {
 
     private static LayoutInflater inflater = null;
 
     Context contexto;
-    String [][] datos;
+    ArrayList<Heroe> datosHeroe;
     //int [] datosImg;
 
-    public Adapter (Context conexto, String[][] datos /*, int [] imagenes*/){
+    public Adapter (Context conexto, ArrayList<Heroe> datosHeroe/*, int [] imagenes*/){
         this.contexto = conexto;
-        this.datos = datos;
+        this.datosHeroe = datosHeroe;
         //this.datosImg = imagenes;
 
         inflater = (LayoutInflater) conexto.getSystemService(conexto.LAYOUT_INFLATER_SERVICE);
@@ -30,16 +32,16 @@ public class Adapter extends BaseAdapter {
         final View vista = inflater.inflate(R.layout.lista_elemento, null);
 
         TextView nombre = (TextView) vista.findViewById(R.id.heroname);
-        //ImageView imagen = (ImageView) vista.findViewById(R.id.heropic);
+        //ImageView imagen = (ImageView) vista.findViewById(R.id.heropic); //ESTABA INTENTANDO METER EN UN FUTURO LA IMAGEN, PERO LO TENÍA CON DRAWABLE
 
-        nombre.setText(datos[i][0]);
+        nombre.setText(datosHeroe.get(i).getName());
 
         return vista;
     }
 
     @Override
     public int getCount() {
-        return datos.length;
+        return datosHeroe.size();
     }
 
     @Override

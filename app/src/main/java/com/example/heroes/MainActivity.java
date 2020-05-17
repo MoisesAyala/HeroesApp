@@ -25,8 +25,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "HEROES";
     private Retrofit retrofit;
+    public int Contador=1;
+    Adapter HeroAdapter;
 
     ListView lista;
+    ArrayList<Heroe> datosHeroes = new ArrayList<Heroe>();
 
     String [][] datos = {
             {"Superman", "calando"},
@@ -43,38 +46,41 @@ public class MainActivity extends AppCompatActivity {
                 .baseUrl("https://www.superheroapi.com/api.php/3073415292695385/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        obtenerDatos();
 
+        int inicio=Contador;
+        int fin=Contador+10;
+
+        while (inicio <= fin){
+            obtenerDatos(inicio);
+            inicio++;
+            Contador++;
+        }
+
+        HeroAdapter = new Adapter(this, datosHeroes);
         lista = (ListView) findViewById(R.id.listahero);
-
-        lista.setAdapter(new Adapter(this, datos));
+        lista.setAdapter(HeroAdapter); //MANDO LOS DATOS DEL ARREGLO "datos" AL ListView QUE SE LLAMA "lista"
     }
 
-    private void obtenerDatos(){
-        ApiService service = retrofit.create(ApiService.class);
-        Call<HeroeRespuesta> heroeRespuestaCall = service.obtenerListaHeroes();
+    private void obtenerDatos(int id) {
+            ApiService service = retrofit.create(ApiService.class);
+            Call<Heroe> heroeRespuestaCall = service.obtenerListaHeroes(id);
 
-        heroeRespuestaCall.enqueue(new Callback<HeroeRespuesta>() {
+        heroeRespuestaCall.enqueue(new Callback<Heroe>() {
             @Override
-            public void onResponse(Call<HeroeRespuesta> call, Response<HeroeRespuesta> response) {
+            public void onResponse(Call<Heroe> call, Response<Heroe> response) {
                 if(response.isSuccessful()){
-                    HeroeRespuesta heroeRespuesta = response.body();
-                    ArrayList<Heroe> ListaHeroes = heroeRespuesta.getResults();
-
-                    for (int i=0; i < ListaHeroes.size(); i++){
-                        Heroe h = ListaHeroes.get(i);
-                        Log.i(TAG, " Heroe: " + h.getName());
-                    }
-
+                    Heroe heroeRespuesta = response.body();
+                    datosHeroes.add(heroeRespuesta);
+                    HeroAdapter.notifyDataSetChanged();
                 } else {
                     Log.e(TAG, " onResponse: "+ response.errorBody());
                 }
             }
 
             @Override
-            public void onFailure(Call<HeroeRespuesta> call, Throwable t) {
+            public void onFailure(Call<Heroe> call, Throwable t) {
                 Log.e(TAG, " onFailure: " + t.getMessage());
             }
         });
     }
-}
+ }
